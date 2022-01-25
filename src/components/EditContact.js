@@ -1,30 +1,50 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 
+const withRouter = WrappedComponent => props => {
+   // const params = useParams();
+    const param1 = useLocation();
+    const params = param1.state.contact;
 
-class AddContact extends React.Component {
-    state = {
-        name: "",
-        email: ""
-    };
-    add = (e) => {
+    // etc... other react-router-dom v6 hooks
+  
+    return (
+      <WrappedComponent
+        {...props}
+        params={params}
+        // etc...
+      />
+    );
+  };
+
+class EditContact extends React.Component {
+constructor(props) {
+    super(props)
+    const {id, name, email} = props.params;
+    this.state = {
+        id,
+        name,
+        email
+    }
+}
+
+  
+    update = (e) => {
         e.preventDefault();
         if(this.state.name === "" || this.state.email === "" ) {
             alert("All fields are mandatory!");
             return;
         }
 
-        this.props.addContactHandler(this.state);
+        this.props.updateContactHandler(this.state);
         this.setState({name: "", email: ""});
-        // const navigate = useNavigate();
-        // navigate("/");
         window.location.href= "/";
     }
         render() {
         return (
             <div className="ui main">
-                <h2>Add Contact</h2>
-                <form className="ui form" onSubmit={this.add}>
+                <h2>Edit Contact</h2>
+                <form className="ui form" onSubmit={this.update}>
                     <div className="field">
                         <label>Name</label>
                         <input type="text" name="name" placeholder="Name" 
@@ -37,7 +57,7 @@ class AddContact extends React.Component {
                         value = {this.state.email}
                         onChange= { (e) => this.setState({email: e.target.value})}></input>
                         </div>
-                        <button className="ui button blue">Add</button>
+                        <button className="ui button blue">Update</button>
 
                 </form>
             </div>
@@ -45,4 +65,4 @@ class AddContact extends React.Component {
     }
 }
 
-export default AddContact;
+export default withRouter(EditContact);
